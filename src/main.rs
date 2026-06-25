@@ -47,16 +47,14 @@ fn main() -> Result<()> {
 
     // dbg!(exact_matrix.keys());
     // dbg!(&exact_matrix);
-    let mut vec1: Vec<Vec<String>> = Vec::new();
-    let mut vec2: Vec<Vec<String>> = Vec::new();
+    let mut output_str: Vec<String> = Vec::new();
 
     for (key,value) in exact_matrix {
-        vec1.push(key.to_vec());
-        vec2.push(value.to_vec());
+        output_str.push(format!("{:?} — {:?}", key, value));
     }
 
-    let my_obj = ToFile{wp_vector: vec1, bpe_vector: vec2};
-    let out = std::fs::File::create("out.txt").unwrap();
+    let my_obj = ToFile{wp_bpe_comparison_str: output_str};
+    let out = std::fs::File::create("out.json").unwrap();
     serde_json::to_writer(out, &my_obj)?;
     Ok(())
 
