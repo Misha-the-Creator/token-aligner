@@ -4,10 +4,9 @@ use tokenizers::tokenizer::{Result, Tokenizer};
 mod aligner;
 
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize)]
 struct ToFile {
-    wp_vector: Vec<Vec<String>>,
-    bpe_vector: Vec<Vec<String>>
+    wp_bpe_comparison_str: Vec<String>,
 }
 
 
