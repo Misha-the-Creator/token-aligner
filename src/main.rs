@@ -83,6 +83,7 @@ fn main() -> Result<()> {
                     }
                     println!("Полученный вектор токенов: {:?}", token_sum);
                 }
+                exact_matrix.insert(vec![token_str_wp.to_string()], token_sum);
             }
         }
         // 2. Middle of the word case
@@ -113,6 +114,6 @@ fn main() -> Result<()> {
         wp_bpe_comparison_str: output_str,
     };
     let out = std::fs::File::create("out.json").unwrap();
-    serde_json::to_writer(out, &my_obj)?;
+    serde_json::to_writer_pretty(out, &my_obj)?;
     Ok(())
 }
