@@ -1,8 +1,7 @@
-use serde::{Serialize};
-use std::{collections::HashMap, fmt::format};
-use tokenizers::tokenizer::{Result, Tokenizer};
+use serde::Serialize;
+use std::collections::HashMap;
+use tokenizers::tokenizer::Result;
 mod aligner;
-
 
 #[derive(Serialize)]
 struct ToFile {
