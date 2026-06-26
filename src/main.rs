@@ -50,7 +50,6 @@ fn main() -> Result<()> {
                 let len_of_word = token_str_wp.len();
                 let mut token_sum: Vec<String> = Vec::new();
                 let mut window_start = 0;
-                let mut test_vec: Vec<String> = Vec::new();
                 'outer: while window_start != len_of_word {
                     let mut pop_counter = 0;
 
@@ -66,7 +65,6 @@ fn main() -> Result<()> {
                             Some(_) => {
                                 println!("Нашли токен {}", poping_slice);
                                 token_sum.push(poping_slice.clone());
-                                test_vec.push(poping_slice.clone());
                                 window_start = len_of_word - pop_counter;
                                 break;
                             }
