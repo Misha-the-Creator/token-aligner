@@ -8,7 +8,6 @@ struct ToFile {
     wp_bpe_comparison_str: Vec<String>,
 }
 
-
 fn main() -> Result<()> {
     // needs http feature enabled
     let tokenizer_bpe = Tokenizer::from_pretrained("deepseek-ai/DeepSeek-V4-Pro", None)?;
@@ -25,7 +24,7 @@ fn main() -> Result<()> {
         if token_str_wp.contains("##") == false {
             let supposed_bpe_token = format!("Ġ{token_str_wp}");
             let finding_key = vocab_bpe.contains_key(&supposed_bpe_token);
-            
+
             // 1.1. Exact match case
             if finding_key == true {
                 // println!("Индекс совпавшего слова ({}) у vocab_bpe — {:?}", token_str_wp, vocab_bpe.get(&supposed_bpe_token));
@@ -56,5 +55,4 @@ fn main() -> Result<()> {
     let out = std::fs::File::create("out.json").unwrap();
     serde_json::to_writer(out, &my_obj)?;
     Ok(())
-
 }
