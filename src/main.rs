@@ -44,10 +44,13 @@ fn main() -> Result<()> {
             if finding_key == true {
                 // println!("Индекс совпавшего слова ({}) у vocab_bpe — {:?}", token_str_wp, vocab_bpe.get(&supposed_bpe_token));
                 exact_matrix.insert(vec![token_str_wp.to_string()], vec![supposed_bpe_token]);
-            } else {
+            }
+            // 1.2. Composite token case
+            else {
                 println!("========================================");
                 println!("Несматченное слово — {token_str_wp}");
                 let len_of_word = token_str_wp.len();
+                println!("len_of_word={}", len_of_word);
                 let mut token_sum: Vec<String> = Vec::new();
                 let mut window_start = 0;
                 'outer: while window_start != len_of_word {
@@ -70,14 +73,25 @@ fn main() -> Result<()> {
                             }
                             None => println!("Такого токена нет в соседнем словаре"),
                         }
-                        println!("Слово для pop() — {}", poping_slice);
+                        println!(
+                            "Слово для pop() — {}, его длина — {}",
+                            poping_slice,
+                            poping_slice.len()
+                        );
+                        let before_pop_len = &poping_slice.len();
                         poping_slice.pop();
                         if poping_slice == "" {
                             println!("Вышли из цикла по крайней причине");
 
                             break 'outer;
                         }
-                        pop_counter += 1;
+                        println!(
+                            "Слово после pop() — {}, его длина — {}",
+                            poping_slice,
+                            poping_slice.len()
+                        );
+                        let after_pop_len = &poping_slice.len();
+                        pop_counter += before_pop_len - after_pop_len;
                     }
                     println!("Полученный вектор токенов: {:?}", token_sum);
                 }
@@ -94,14 +108,61 @@ fn main() -> Result<()> {
                 // println!("Индекс совпавшего слова ({}) у vocab_bpe — {:?}", token_str_wp, vocab_bpe.get(&supposed_bpe_token));
                 exact_matrix.insert(vec![token_str_wp.to_string()], vec![supposed_bpe_token]);
             }
+            // 2.2 Composite token case
+            else {
+                println!("========================================");
+                println!("Несматченное слово — {token_str_wp}");
+                let len_of_word = token_str_wp.len();
+                println!("len_of_word={}", len_of_word);
+                let mut token_sum: Vec<String> = Vec::new();
+                let mut window_start = 0;
+                'outer: while window_start != len_of_word {
+                    let mut pop_counter = 0;
+
+                    let new_window_start = window_start;
+                    println!("new_window_start={}", new_window_start);
+                    let slice = token_str_wp[new_window_start..len_of_word].to_string();
+                    println!("slice3={slice}");
+                    let mut poping_slice = token_str_wp[new_window_start..len_of_word].to_string();
+
+                    for _ in slice.chars() {
+                        let supposed_bpe_token = vocab_bpe.get(&poping_slice);
+                        match supposed_bpe_token {
+                            Some(_) => {
+                                println!("Нашли токен {}", poping_slice);
+                                token_sum.push(poping_slice.clone());
+                                window_start = len_of_word - pop_counter;
+                                break;
+                            }
+                            None => println!("Такого токена нет в соседнем словаре"),
+                        }
+                        println!(
+                            "Слово для pop() — {}, его длина — {}",
+                            poping_slice,
+                            poping_slice.len()
+                        );
+                        let before_pop_len = &poping_slice.len();
+                        poping_slice.pop();
+                        if poping_slice == "" {
+                            println!("Вышли из цикла по крайней причине");
+
+                            break 'outer;
+                        }
+                        println!(
+                            "Слово после pop() — {}, его длина — {}",
+                            poping_slice,
+                            poping_slice.len()
+                        );
+                        let after_pop_len = &poping_slice.len();
+                        pop_counter += before_pop_len - after_pop_len;
+                    }
+                    println!("Полученный вектор токенов: {:?}", token_sum);
+                }
+                exact_matrix.insert(vec![token_str_wp.to_string()], token_sum);
+            }
         }
     }
 
-    // let vocab_bpe = tokenizer_bpe.get_vocab(true);
-    // let vocab_wp = tokenizer_wp.get_vocab(true);
-
-    // // dbg!(exact_matrix.keys());
-    // // dbg!(&exact_matrix);
     let mut output_str: Vec<String> = Vec::new();
 
     for (key, value) in exact_matrix {
