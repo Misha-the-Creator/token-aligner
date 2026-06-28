@@ -11,6 +11,7 @@ pub enum TokenizationAlgorithm {
 }
 
 pub struct Aligner {
+    #[allow(dead_code)]
     pub tokenizer: Tokenizer,
     pub vocab: HashMap<String, u32>,
     pub tokenization_algorithm: TokenizationAlgorithm,
