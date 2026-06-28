@@ -29,12 +29,10 @@ fn predicats_start_of_word_student(
                 teacher_token_str.strip_prefix("Ġ").unwrap().to_string()
             }
             &TokenizationAlgorithm::Unigram => {
-                teacher_token_str
-                    .strip_prefix("Ġ")
-                    .unwrap()
-                    .to_string()
-                    .insert_str(0, "▁");
-                teacher_token_str.to_string()
+                let mut mutable_teacher_token_str =
+                    teacher_token_str.strip_prefix("Ġ").unwrap().to_string();
+                mutable_teacher_token_str.insert_str(0, "▁");
+                mutable_teacher_token_str
             }
             &TokenizationAlgorithm::WordLevel => "WordLevelCase".to_string(),
         },
@@ -54,12 +52,18 @@ fn predicats_start_of_word_student(
         },
         &TokenizationAlgorithm::Unigram => match tok_algo_student {
             &TokenizationAlgorithm::BPE => {
-                teacher_token_str
-                    .strip_prefix("_")
-                    .unwrap()
-                    .to_string()
-                    .insert_str(0, "Ġ");
-                teacher_token_str.to_string()
+                let mutable_teacher_token_str = teacher_token_str.strip_prefix("▁");
+                match mutable_teacher_token_str {
+                    Some(p) => {
+                        let mut new_p = p.to_string();
+                        new_p.insert_str(0, "Ġ");
+                        new_p
+                    }
+                    None => {
+                        let none_val = "Aint do shit".to_string();
+                        none_val
+                    }
+                }
             }
             &TokenizationAlgorithm::WordPiece => {
                 teacher_token_str.strip_prefix("▁").unwrap().to_string()
