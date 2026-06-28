@@ -116,7 +116,6 @@ fn predicats_middle_of_word_student(
 }
 
 fn save_as_txt<T: Serialize + Debug>(arr: &Vec<T>, name_of_file: &str) {
-    let list_as_json = serde_json::to_string(arr).unwrap();
     let mut file = File::create(name_of_file).expect("Could not create file!");
 
     for elem in arr {
