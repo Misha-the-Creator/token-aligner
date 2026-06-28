@@ -1,5 +1,14 @@
 use std::collections::HashMap;
-use tokenizers::tokenizer::Tokenizer;
+use tokenizers::models::ModelWrapper;
+use tokenizers::tokenizer::{Result, Tokenizer};
+
+#[derive(Debug)]
+pub enum TokenizationAlgorithm {
+    BPE,
+    WordPiece,
+    Unigram,
+    WordLevel,
+}
 
 pub struct Aligner {
     pub tokenizer: Option<Tokenizer>,

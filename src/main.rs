@@ -1,7 +1,7 @@
 use serde::Serialize;
-use std::collections::HashMap;
 use tokenizers::tokenizer::Result;
 mod aligner;
+mod matching_algorithm;
 
 #[derive(Serialize)]
 struct ToFile {
