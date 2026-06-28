@@ -11,23 +11,25 @@ pub enum TokenizationAlgorithm {
 }
 
 pub struct Aligner {
-    pub tokenizer: Option<Tokenizer>,
-    pub vocab: Option<HashMap<String, u32>>,
+    pub tokenizer: Tokenizer,
+    pub vocab: HashMap<String, u32>,
+    pub tokenization_algorithm: TokenizationAlgorithm,
 }
 
 impl Aligner {
-    pub fn create_tokenizer(&mut self, model_name: &str) {
-        let tokenizer = Tokenizer::from_pretrained(model_name, None)
-            .expect("Something goes wrong while getting tokenizer");
-        self.tokenizer = Some(tokenizer);
-    }
-
-    pub fn create_vocab(&mut self) {
-        let vocab = self
-            .tokenizer
-            .as_ref()
-            .expect("Smth goes wrong")
-            .get_vocab(true);
-        self.vocab = Some(vocab);
+    pub fn create_tokenizer(model_name: &str) -> Result<Aligner> {
+        let tokenizer = Tokenizer::from_pretrained(model_name, None)?;
+        let vocab = tokenizer.get_vocab(true);
+        let tokenization_algorithm = match tokenizer.get_model().clone() {
+            ModelWrapper::BPE(_) => TokenizationAlgorithm::BPE,
+            ModelWrapper::WordPiece(_) => TokenizationAlgorithm::WordPiece,
+            ModelWrapper::Unigram(_) => TokenizationAlgorithm::Unigram,
+            ModelWrapper::WordLevel(_) => TokenizationAlgorithm::WordLevel,
+        };
+        Ok(Self {
+            tokenizer,
+            vocab,
+            tokenization_algorithm,
+        })
     }
 }
