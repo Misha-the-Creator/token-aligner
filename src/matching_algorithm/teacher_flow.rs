@@ -12,7 +12,7 @@ fn predicats_start_of_word_teacher(
     match tok_algo_teacher {
         &TokenizationAlgorithm::BPE => teacher_token_str.starts_with("Ġ"),
         &TokenizationAlgorithm::WordPiece => !teacher_token_str.starts_with("##"),
-        &TokenizationAlgorithm::Unigram => teacher_token_str.starts_with("_"),
+        &TokenizationAlgorithm::Unigram => teacher_token_str.starts_with("▁"),
         &TokenizationAlgorithm::WordLevel => false,
     }
 }
