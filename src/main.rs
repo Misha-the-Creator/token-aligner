@@ -11,12 +11,12 @@ struct ToFile {
 fn main() -> Result<()> {
     let model_1 = aligner::aligner_define::Aligner::create_tokenizer("xlnet/xlnet-base-cased")?; // WP
     let model_2 =
-        aligner::aligner_define::Aligner::create_tokenizer("deepseek-ai/DeepSeek-V4-Pro")?; // BPE
+        aligner::aligner_define::Aligner::create_tokenizer("google-bert/bert-base-cased")?; // BPE
 
     // dbg!(model_1.tokenization_algorithm);
 
     let out_mtrx =
-        matching_algorithm::teacher_flow::Matrix::generate_output_matrix(model_1, model_2);
+        matching_algorithm::teacher_flow::Matrix::generate_output_matrix(model_2, model_1);
     // dbg!(out_mtrx);
 
     let mut output_str: Vec<String> = Vec::new();
