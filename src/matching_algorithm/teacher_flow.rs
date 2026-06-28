@@ -131,6 +131,7 @@ pub struct Matrix {
 
 impl Matrix {
     pub fn generate_output_matrix(tokenizer_student: Aligner, tokenizer_teacher: Aligner) -> Self {
+        let mut debug_vect_0: Vec<(String, String)> = Vec::new();
         let mut debug_vect: Vec<(String, String, u32)> = Vec::new();
         let mut debug_vect_middle: Vec<(String, String, Vec<(String, u32)>)> = Vec::new();
         let teacher_vocab = tokenizer_teacher.vocab;
@@ -149,15 +150,31 @@ impl Matrix {
             {
                 let clones = teacher_token_str.clone();
                 debug_vec3.push(String::from(clones));
+                println!(
+                    "Учительсекий токенизатор {:?}",
+                    &tokenizer_teacher.tokenization_algorithm
+                );
+                println!(
+                    "Студенческий {:?}",
+                    &tokenizer_student.tokenization_algorithm
+                );
                 let supposed_student_token = predicats_start_of_word_student(
                     &tokenizer_teacher.tokenization_algorithm,
                     &tokenizer_student.tokenization_algorithm,
                     &teacher_token_str,
                 );
+
+                println!("supposed_stu {}", supposed_student_token);
+
+                let for_debug_0_teacher = teacher_token_str.clone();
+                let for_debug_0_student = supposed_student_token.clone();
+                debug_vect_0.push((for_debug_0_teacher, for_debug_0_student));
+
                 let is_such_token = student_vocab.contains_key(&supposed_student_token);
 
                 // 1.1. Exact match case
                 if is_such_token == true {
+                    // println!("{teacher_token_str} — {supposed_student_token}");
                     // println!("Индекс совпавшего слова ({}) у vocab_bpe — {:?}", token_str_wp, vocab_bpe.get(&supposed_student_token));
                     let student_tokex_idx = *student_vocab.get(&supposed_student_token).unwrap();
                     let temp_str = supposed_student_token.clone();
@@ -170,10 +187,10 @@ impl Matrix {
                 }
                 // 1.2. Composite token case
                 else {
-                    println!("========================================");
-                    println!("Несматченное слово — {supposed_student_token}");
+                    // println!("========================================");
+                    // println!("Несматченное слово — {supposed_student_token}");
                     let len_of_teacher_word: usize = supposed_student_token.len();
-                    println!("len_of_word={}", len_of_teacher_word);
+                    // println!("len_of_word={}", len_of_teacher_word);
                     let mut token_sum: Vec<(String, u32)> = Vec::new();
 
                     let mut window_start = 0;
@@ -181,10 +198,10 @@ impl Matrix {
                         let mut pop_counter = 0;
 
                         let new_window_start = window_start;
-                        println!("new_window_start={}", new_window_start);
+                        // println!("new_window_start={}", new_window_start);
                         let slice = supposed_student_token[new_window_start..len_of_teacher_word]
                             .to_string();
-                        println!("slice3={slice}");
+                        // println!("slice3={slice}");
                         let mut poping_slice = supposed_student_token
                             [new_window_start..len_of_teacher_word]
                             .to_string();
@@ -193,34 +210,34 @@ impl Matrix {
                             let supposed_student_token = student_vocab.get(&poping_slice);
                             match supposed_student_token {
                                 Some(index) => {
-                                    println!("Нашли токен {}", poping_slice);
+                                    // println!("Нашли токен {}", poping_slice);
                                     token_sum.push((poping_slice.clone(), *index));
                                     window_start = len_of_teacher_word - pop_counter;
                                     break;
                                 }
-                                None => println!("Такого токена нет в соседнем словаре"),
+                                None => (),
                             }
-                            println!(
-                                "Слово для pop() — {}, его длина — {}",
-                                poping_slice,
-                                poping_slice.len()
-                            );
+                            // println!(
+                            // "Слово для pop() — {}, его длина — {}",
+                            // poping_slice,
+                            // poping_slice.len()
+                            // );
                             let before_pop_len = &poping_slice.len();
                             poping_slice.pop();
                             if poping_slice == "" {
-                                println!("Вышли из цикла по крайней причине");
+                                // println!("Вышли из цикла по крайней причине");
 
                                 break 'outer;
                             }
-                            println!(
-                                "Слово после pop() — {}, его длина — {}",
-                                poping_slice,
-                                poping_slice.len()
-                            );
+                            // println!(
+                            // "Слово после pop() — {}, его длина — {}",
+                            // poping_slice,
+                            // poping_slice.len()
+                            // );
                             let after_pop_len = &poping_slice.len();
                             pop_counter += before_pop_len - after_pop_len;
                         }
-                        println!("Полученный вектор токенов: {:?}", token_sum);
+                        // println!("Полученный вектор токенов: {:?}", token_sum);
                     }
                     let temp_str2 = teacher_token_str.clone();
                     let temp_str = supposed_student_token.clone();
@@ -253,20 +270,20 @@ impl Matrix {
                 }
                 // 2.2 Composite token case
                 else {
-                    println!("========================================");
-                    println!("Несматченное слово — {}", supposed_student_token.clone());
+                    // println!("========================================");
+                    // println!("Несматченное слово — {}", supposed_student_token.clone());
                     let len_of_teacher_word: usize = supposed_student_token.len();
-                    println!("len_of_word={}", len_of_teacher_word);
+                    // println!("len_of_word={}", len_of_teacher_word);
                     let mut token_sum: Vec<(String, u32)> = Vec::new();
                     let mut window_start = 0;
                     'outer: while window_start != len_of_teacher_word {
                         let mut pop_counter = 0;
 
                         let new_window_start = window_start;
-                        println!("new_window_start={}", new_window_start);
+                        // println!("new_window_start={}", new_window_start);
                         let slice = supposed_student_token[new_window_start..len_of_teacher_word]
                             .to_string();
-                        println!("slice3={slice}");
+                        // println!("slice3={slice}");
                         let mut poping_slice = supposed_student_token
                             [new_window_start..len_of_teacher_word]
                             .to_string();
@@ -275,34 +292,34 @@ impl Matrix {
                             let supposed_student_token = student_vocab.get(&poping_slice);
                             match supposed_student_token {
                                 Some(index) => {
-                                    println!("Нашли токен {}", poping_slice);
+                                    // println!("Нашли токен {}", poping_slice);
                                     token_sum.push((poping_slice.clone(), *index));
                                     window_start = len_of_teacher_word - pop_counter;
                                     break;
                                 }
-                                None => println!("Такого токена нет в соседнем словаре"),
+                                None => (),
                             }
-                            println!(
-                                "Слово для pop() — {}, его длина — {}",
-                                poping_slice,
-                                poping_slice.len()
-                            );
+                            // println!(
+                            // "Слово для pop() — {}, его длина — {}",
+                            // poping_slice,
+                            // poping_slice.len()
+                            // );
                             let before_pop_len = &poping_slice.len();
                             poping_slice.pop();
                             if poping_slice == "" {
-                                println!("Вышли из цикла по крайней причине");
+                                // println!("Вышли из цикла по крайней причине");
 
                                 break 'outer;
                             }
-                            println!(
-                                "Слово после pop() — {}, его длина — {}",
-                                poping_slice,
-                                poping_slice.len()
-                            );
+                            // println!(
+                            // "Слово после pop() — {}, его длина — {}",
+                            // poping_slice,
+                            // poping_slice.len()
+                            // );
                             let after_pop_len = &poping_slice.len();
                             pop_counter += before_pop_len - after_pop_len;
                         }
-                        println!("Полученный вектор токенов: {:?}", token_sum);
+                        // println!("Полученный вектор токенов: {:?}", token_sum);
                     }
                     output_matrix
                         .output
@@ -310,6 +327,7 @@ impl Matrix {
                 }
             }
         }
+        save_as_txt(&debug_vect_0, "debug_0.txt");
         save_as_txt(&debug_vect, "debug_1.txt");
         save_as_txt(&debug_vec3, "debug_2.txt");
         save_as_txt(&debug_vect_middle, "debug_3.txt");
